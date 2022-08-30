@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Zuccini</string>
+    <string name="fruit_name">Fruit Name</string>
+    <string name="location">Location</string>
+    <string name="description">Description</string>
+</resources>
