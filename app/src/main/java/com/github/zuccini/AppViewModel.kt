@@ -17,6 +17,5 @@ val fruitList =
 @HiltViewModel
 class AppViewModel @Inject constructor() : ViewModel() {
     val fruits by mutableStateOf(fruitList)
-    val location by mutableStateOf(fruitList.first().location)
     var selectedFruit by mutableStateOf(fruitList.first())
 }

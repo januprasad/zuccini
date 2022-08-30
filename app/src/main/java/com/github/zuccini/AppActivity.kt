@@ -41,7 +41,7 @@ class AppActivity() : ComponentActivity() {
 @Composable
 fun App() {
     val viewModel = viewModel(modelClass = AppViewModel::class.java)
-    var selectedFruit = viewModel.selectedFruit
+    val selectedFruit = viewModel.selectedFruit
     var name by remember(selectedFruit.fruitId) { mutableStateOf(selectedFruit.fruitName) }
     var location by remember(selectedFruit.fruitId) { mutableStateOf(selectedFruit.location) }
     var description by remember(selectedFruit.fruitId) { mutableStateOf(selectedFruit.description) }
@@ -74,7 +74,6 @@ fun App() {
 fun FruitSpinner(fruits: List<Fruit>, setSelectedFruit: (Fruit) -> Unit) {
     var fruitsText by remember { mutableStateOf(fruits.first().fruitName) }
     var expanded by remember { mutableStateOf(false) }
-    val viewModel = viewModel(modelClass = AppViewModel::class.java)
     Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
         Row(
             Modifier
