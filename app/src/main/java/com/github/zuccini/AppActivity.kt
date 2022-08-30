@@ -14,9 +14,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.zuccini.ui.theme.ZucciniTheme
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
+@AndroidEntryPoint
 class AppActivity() : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,9 +31,7 @@ class AppActivity() : ComponentActivity() {
                     color = MaterialTheme.colors.background,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    App(
-                        fruits = fruits
-                    )
+                    App()
                 }
             }
         }
@@ -38,15 +39,16 @@ class AppActivity() : ComponentActivity() {
 }
 
 @Composable
-fun App(
-    fruits: List<Fruit> = ArrayList<Fruit>(),
-    selectedFruit: Fruit = Fruit()
-) {
+fun App() {
+    val viewModel = viewModel(modelClass = AppViewModel::class.java)
+    var selectedFruit = viewModel.selectedFruit
     var name by remember(selectedFruit.fruitId) { mutableStateOf(selectedFruit.fruitName) }
-    var inLocation by remember(selectedFruit.fruitId) { mutableStateOf(selectedFruit.location) }
+    var location by remember(selectedFruit.fruitId) { mutableStateOf(selectedFruit.location) }
     var inDescription by remember(selectedFruit.fruitId) { mutableStateOf(selectedFruit.description) }
     Column(modifier = Modifier.padding(10.dp)) {
-        FruitSpinner(specimens = fruits)
+        FruitSpinner(fruits = viewModel.fruits) {
+            viewModel.selectedFruit = it
+        }
         OutlinedTextField(
             value = name,
             onValueChange = { name = it },
@@ -54,8 +56,8 @@ fun App(
             modifier = Modifier.fillMaxWidth()
         )
         OutlinedTextField(
-            value = inLocation,
-            onValueChange = { inLocation = it },
+            value = location,
+            onValueChange = { location = it },
             label = { Text(stringResource(R.string.location)) },
             modifier = Modifier.fillMaxWidth()
         )
@@ -69,9 +71,10 @@ fun App(
 }
 
 @Composable
-fun FruitSpinner(specimens: List<Fruit>) {
-    var specimenText by remember { mutableStateOf("Specimen Collection") }
+fun FruitSpinner(fruits: List<Fruit>, setSelectedFruit: (Fruit) -> Unit) {
+    var fruitsText by remember { mutableStateOf(fruits.first().fruitName) }
     var expanded by remember { mutableStateOf(false) }
+    val viewModel = viewModel(modelClass = AppViewModel::class.java)
     Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
         Row(
             Modifier
@@ -83,12 +86,14 @@ fun FruitSpinner(specimens: List<Fruit>) {
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = specimenText, fontSize = 18.sp, modifier = Modifier.padding(end = 8.dp))
+            Text(text = fruitsText, fontSize = 18.sp, modifier = Modifier.padding(end = 8.dp))
             Icon(imageVector = Icons.Filled.ArrowDropDown, contentDescription = "")
             DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                specimens.forEach { fruit ->
+                fruits.forEach { fruit ->
                     DropdownMenuItem(onClick = {
                         expanded = false
+                        setSelectedFruit(fruit)
+                        fruitsText = fruit.fruitName
                     }) {
                         Text(text = fruit.toString())
                     }
