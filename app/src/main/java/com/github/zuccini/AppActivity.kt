@@ -44,7 +44,7 @@ fun App() {
     var selectedFruit = viewModel.selectedFruit
     var name by remember(selectedFruit.fruitId) { mutableStateOf(selectedFruit.fruitName) }
     var location by remember(selectedFruit.fruitId) { mutableStateOf(selectedFruit.location) }
-    var inDescription by remember(selectedFruit.fruitId) { mutableStateOf(selectedFruit.description) }
+    var description by remember(selectedFruit.fruitId) { mutableStateOf(selectedFruit.description) }
     Column(modifier = Modifier.padding(10.dp)) {
         FruitSpinner(fruits = viewModel.fruits) {
             viewModel.selectedFruit = it
@@ -62,8 +62,8 @@ fun App() {
             modifier = Modifier.fillMaxWidth()
         )
         OutlinedTextField(
-            value = inDescription,
-            onValueChange = { inDescription = it },
+            value = description,
+            onValueChange = { description = it },
             label = { Text(stringResource(R.string.description)) },
             modifier = Modifier.fillMaxWidth()
         )
